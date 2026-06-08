@@ -1,0 +1,34 @@
+# ═══════════════════════════════════════════════════════════
+#  Render Deployment Configuration — Omix Store
+# ═══════════════════════════════════════════════════════════
+
+services:
+  # ── Next.js Web App ────────────────────────────────────
+  - type: web
+    name: omix-store
+    runtime: node
+    plan: free
+    branch: main
+    rootDir: .
+    buildCommand: |
+      npm install
+      npm run build
+    startCommand: npm start
+    healthCheckPath: /
+    autoDeploy: true
+
+    # ── Environment Variables ─────────────────────────────
+    envVars:
+      # Supabase
+      - key: NEXT_PUBLIC_SUPABASE_URL
+        value: https://xmdyovfcjogkarwxiyhb.supabase.co
+      - key: NEXT_PUBLIC_SUPABASE_ANON_KEY
+        sync: false   # Set manually in Render dashboard
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false   # Set manually in Render dashboard
+
+      # App
+      - key: NEXT_PUBLIC_APP_URL
+        value: https://omix-store.onrender.com
+      - key: NODE_ENV
+        value: production
