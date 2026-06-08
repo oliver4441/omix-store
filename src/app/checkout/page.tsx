@@ -63,7 +63,7 @@ export default function CheckoutPage() {
           customer_name: form.fullName.trim(),
           customer_phone: form.phone.trim(),
           customer_email: form.email.trim() || null,
-          delivery_address: form.address.trim(),
+          address: form.address.trim(),
           total_amount: total,
           status: 'pending',
         })
@@ -77,7 +77,7 @@ export default function CheckoutPage() {
         order_id: order.id,
         product_id: item.id,
         product_name: item.name,
-        product_price: item.price,
+        price: item.price,
         quantity: item.quantity,
       }))
 

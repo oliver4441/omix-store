@@ -7,21 +7,6 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
--- ── Custom types ────────────────────────────────────────
-DO $$ BEGIN
-  CREATE TYPE order_status AS ENUM (
-    'pending',
-    'confirmed',
-    'processing',
-    'shipped',
-    'delivered',
-    'cancelled',
-    'refunded'
-  );
-EXCEPTION
-  WHEN duplicate_object THEN NULL;
-END $$;
-
 -- ═══════════════════════════════════════════════════════════
 --  CATEGORIES
 -- ═══════════════════════════════════════════════════════════
@@ -69,33 +54,16 @@ CREATE TABLE IF NOT EXISTS public.products (
 CREATE TABLE IF NOT EXISTS public.orders (
   id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   user_id         UUID REFERENCES auth.users(id) ON DELETE SET NULL,
-  status          order_status NOT NULL DEFAULT 'pending',
-  subtotal        NUMERIC(10, 2) NOT NULL CHECK (subtotal >= 0),
-  shipping_cost   NUMERIC(10, 2) NOT NULL DEFAULT 0 CHECK (shipping_cost >= 0),
-  tax             NUMERIC(10, 2) NOT NULL DEFAULT 0 CHECK (tax >= 0),
-  total           NUMERIC(10, 2) NOT NULL CHECK (total >= 0),
-  currency        TEXT NOT NULL DEFAULT 'USD',
-  -- Shipping address
-  shipping_name       TEXT,
-  shipping_email      TEXT,
-  shipping_phone      TEXT,
-  shipping_address    TEXT,
-  shipping_city       TEXT,
-  shipping_state      TEXT,
-  shipping_zip        TEXT,
-  shipping_country    TEXT DEFAULT 'US',
-  -- Payment
-  payment_method      TEXT,
-  payment_status      TEXT DEFAULT 'pending',
-  payment_id          TEXT,
-  -- Notes
-  customer_note       TEXT,
-  internal_note       TEXT,
-  -- Timestamps
-  confirmed_at    TIMESTAMPTZ,
-  shipped_at      TIMESTAMPTZ,
-  delivered_at    TIMESTAMPTZ,
-  cancelled_at    TIMESTAMPTZ,
+  order_number    TEXT UNIQUE,
+  status          TEXT NOT NULL DEFAULT 'pending',
+  total_amount    NUMERIC(10, 2) NOT NULL DEFAULT 0,
+  total           NUMERIC(10, 2) GENERATED ALWAYS AS (total_amount) STORED,
+  customer_name   TEXT,
+  email           TEXT,
+  phone           TEXT,
+  address         TEXT,
+  city            TEXT DEFAULT 'Kericho',
+  notes           TEXT,
   created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -109,10 +77,10 @@ CREATE TABLE IF NOT EXISTS public.order_items (
   product_id  UUID REFERENCES public.products(id) ON DELETE SET NULL,
   product_name  TEXT NOT NULL,
   product_sku   TEXT,
-  image_url   TEXT,
-  price       NUMERIC(10, 2) NOT NULL CHECK (price >= 0),
-  quantity    INTEGER NOT NULL CHECK (quantity > 0),
-  subtotal    NUMERIC(10, 2) NOT NULL CHECK (subtotal >= 0),
+  product_image TEXT,
+  price         NUMERIC(10, 2) NOT NULL CHECK (price >= 0),
+  quantity      INTEGER NOT NULL CHECK (quantity > 0),
+  subtotal      NUMERIC(10, 2) NOT NULL CHECK (subtotal >= 0),
   created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
