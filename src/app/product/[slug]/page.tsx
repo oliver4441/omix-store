@@ -32,7 +32,7 @@ export default async function ProductPage({
   params: { slug: string }
 }) {
   const { data: product } = await supabase
-    .from('products')
+    .from('omix_products')
     .select('*')
     .eq('slug', params.slug)
     .single()
@@ -43,7 +43,7 @@ export default async function ProductPage({
   let relatedProducts: Product[] = []
   if (product.category_id) {
     const { data } = await supabase
-      .from('products')
+      .from('omix_products')
       .select('*')
       .eq('category_id', product.category_id)
       .neq('id', product.id)

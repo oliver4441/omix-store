@@ -52,7 +52,7 @@ export default async function CategoryPage({
   params: { slug: string }
 }) {
   const { data: category } = await supabase
-    .from('categories')
+    .from('omix_categories')
     .select('*')
     .eq('slug', params.slug)
     .single()
@@ -60,7 +60,7 @@ export default async function CategoryPage({
   if (!category) notFound()
 
   const { data: products } = await supabase
-    .from('products')
+    .from('omix_products')
     .select('*')
     .eq('category_id', category.id)
     .order('created_at', { ascending: false })

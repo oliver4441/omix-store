@@ -58,11 +58,11 @@ export default function CheckoutPage() {
 
     try {
       const { data: order, error: orderError } = await supabase
-        .from('orders')
+        .from('omix_orders')
         .insert({
           customer_name: form.fullName.trim(),
-          customer_phone: form.phone.trim(),
-          customer_email: form.email.trim() || null,
+          phone: form.phone.trim(),
+          email: form.email.trim() || null,
           address: form.address.trim(),
           total_amount: total,
           status: 'pending',
@@ -81,7 +81,7 @@ export default function CheckoutPage() {
         quantity: item.quantity,
       }))
 
-      const { error: itemsError } = await supabase.from('order_items').insert(orderItems)
+      const { error: itemsError } = await supabase.from('omix_order_items').insert(orderItems)
       if (itemsError) throw itemsError
 
       // Send notification

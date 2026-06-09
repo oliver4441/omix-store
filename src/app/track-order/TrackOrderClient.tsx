@@ -40,8 +40,8 @@ function TrackOrderContent() {
     setSearched(true)
 
     const { data, error: err } = await supabase
-      .from('orders')
-      .select('*, order_items(*, products(*))')
+      .from('omix_orders')
+      .select('*, omix_order_items(*, omix_products(*))')
       .eq('id', orderId.trim())
       .single()
 

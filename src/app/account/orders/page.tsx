@@ -63,7 +63,7 @@ export default function OrdersPage() {
       setUser(authUser)
 
       const { data, error: fetchError } = await supabase
-        .from('orders')
+        .from('omix_orders')
         .select('*')
         .eq('email', authUser.email!)
         .order('created_at', { ascending: false })

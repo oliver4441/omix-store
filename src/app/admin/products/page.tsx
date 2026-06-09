@@ -62,8 +62,8 @@ export default function AdminProductsPage() {
 
   async function fetchData() {
     const [productsRes, categoriesRes] = await Promise.all([
-      supabase.from('products').select('*').order('created_at', { ascending: false }),
-      supabase.from('categories').select('id, name').order('name'),
+      supabase.from('omix_products').select('*').order('created_at', { ascending: false }),
+      supabase.from('omix_categories').select('id, name').order('name'),
     ])
 
     if (productsRes.data) setProducts(productsRes.data)
@@ -100,7 +100,7 @@ export default function AdminProductsPage() {
     const fileName = `${Date.now()}-${file.name.replace(/\s/g, '-')}`
 
     const { error: uploadError } = await supabase.storage
-      .from('products')
+      .from('omix_products')
       .upload(fileName, file, { upsert: true })
 
     if (uploadError) {
@@ -110,7 +110,7 @@ export default function AdminProductsPage() {
     }
 
     const { data: urlData } = supabase.storage
-      .from('products')
+      .from('omix_products')
       .getPublicUrl(fileName)
 
     setForm((prev) => ({ ...prev, image_url: urlData.publicUrl }))
@@ -134,13 +134,13 @@ export default function AdminProductsPage() {
 
     if (editingProduct) {
       const { error } = await supabase
-        .from('products')
+        .from('omix_products')
         .update(payload)
         .eq('id', editingProduct.id)
 
       if (error) alert('Error updating: ' + error.message)
     } else {
-      const { error } = await supabase.from('products').insert(payload)
+      const { error } = await supabase.from('omix_products').insert(payload)
 
       if (error) alert('Error creating: ' + error.message)
     }
@@ -153,7 +153,7 @@ export default function AdminProductsPage() {
   async function handleDelete() {
     if (!deleteId) return
 
-    const { error } = await supabase.from('products').delete().eq('id', deleteId)
+    const { error } = await supabase.from('omix_products').delete().eq('id', deleteId)
     if (error) alert('Error deleting: ' + error.message)
 
     setDeleteId(null)

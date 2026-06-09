@@ -10,16 +10,16 @@ export default async function ShopPage({
 }) {
   // Fetch categories
   const { data: categories } = await supabase
-    .from('categories')
+    .from('omix_categories')
     .select('*')
     .order('name')
 
   // Build products query
-  let query = supabase.from('products').select('*').order('created_at', { ascending: false })
+  let query = supabase.from('omix_products').select('*').order('created_at', { ascending: false })
 
   if (searchParams.category) {
     const { data: category } = await supabase
-      .from('categories')
+      .from('omix_categories')
       .select('id')
       .eq('slug', searchParams.category)
       .single()

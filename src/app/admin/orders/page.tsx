@@ -59,7 +59,7 @@ export default function AdminOrdersPage() {
   async function fetchOrders() {
     setLoading(true)
     const { data } = await supabase
-      .from('orders')
+      .from('omix_orders')
       .select('*')
       .order('created_at', { ascending: false })
 
@@ -70,7 +70,7 @@ export default function AdminOrdersPage() {
   async function updateStatus(orderId: string, newStatus: string) {
     setUpdating(true)
     const { error } = await supabase
-      .from('orders')
+      .from('omix_orders')
       .update({ status: newStatus })
       .eq('id', orderId)
 
